@@ -1,0 +1,17 @@
+{
+    "name": "tuyen/do-an-xem-phim",
+    "autoload": {
+        "psr-4": {
+            "Tuyen\\DoAnXemPhim\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "TanVo-13",
+            "email": "tandangvo01297155542@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.10"
+    }
+}
