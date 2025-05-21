@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['slug']) && isset($_PO
 }
 
 // Quay lại trang gốc dựa vào type
-if ($type === 'history') {
+if ($save_type === 'history') {
   header("Location: viewhistory.php");
 } else {
   header("Location: savedmovies.php");

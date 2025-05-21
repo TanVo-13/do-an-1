@@ -19,6 +19,9 @@ $query->execute();
 $result = $query->get_result();
 $user = $result->fetch_assoc();
 
+// Đồng bộ $_SESSION['user_avatar'] với cơ sở dữ liệu
+$_SESSION['user_avatar'] = $user['avatar'] ? 'uploads/avatars/' . $user['avatar'] : 'img/user.png';
+
 // Lấy số phim đã lưu
 $countStmt = $conn->prepare("SELECT COUNT(*) AS total FROM user_movies WHERE user_id = ? AND save_type = 'favorite'");
 $countStmt->bind_param("i", $user_id);
@@ -57,13 +60,13 @@ $movieCount = $countResult->fetch_assoc()['total'];
         <div class="flex flex-col md:flex-row gap-6">
             <!-- Avatar -->
             <div class="flex flex-col items-center">
-                <img id="userAvatar" src="<?= htmlspecialchars($user['avatar'] ?? 'img/user1.png') ?>" class="rounded-full border-4 border-yellow-400 w-32 h-32 object-cover transition-transform duration-300 hover:scale-105" alt="Avatar">
-                    <form id="avatarForm" enctype="multipart/form-data" class="mt-3 relative">
-                        <label for="avatarInput" class="cursor-pointer inline-block bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded transition-all duration-300">
-                            Đổi ảnh đại diện
-                    <input type="file" id="avatarInput" name="avatar" class="hidden" accept="image/*">
+                <img id="userAvatar" src="<?= htmlspecialchars($_SESSION['user_avatar']) ?>?v=<?= time() ?>" class="rounded-full border-4 border-yellow-400 w-32 h-32 object-cover transition-transform duration-300 hover:scale-105" alt="Avatar">
+                <form id="avatarForm" enctype="multipart/form-data" class="mt-3 relative">
+                    <label for="avatarInput" class="cursor-pointer inline-block bg-yellow-500 hover:bg-yellow-400 text-black px-4 py-2 rounded transition-all duration-300">
+                        Đổi ảnh đại diện
+                        <input type="file" id="avatarInput" name="avatar" class="hidden" accept="image/*">
                     </label>
-                    </form>
+                </form>
             </div>
 
             <!-- Thông tin người dùng -->
@@ -71,22 +74,20 @@ $movieCount = $countResult->fetch_assoc()['total'];
                 <h2 class="text-2xl font-bold text-yellow-400 mb-4">
                     <i class="fa-solid fa-user-circle me-2"></i>Thông tin người dùng
                 </h2>
-            <!-- Form đổi tên người dùng -->
-            <form id="usernameForm">
-            <div class="mb-4">
-                <label class="block mb-1 font-semibold">Tên người dùng:</label>
-                <div class="flex gap-2">
-                    <input type="text" name="new_username" class="w-full px-3 py-2 text-black rounded" value="<?= htmlspecialchars($user['username']) ?>" required>
-                    <button type="submit" class="bg-green-500 hover:bg-green-400 text-white px-4 rounded transition-all duration-300">Lưu</button>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <label class="block mb-1 font-semibold">Email:</label>
-                    <input type="email" value="<?= htmlspecialchars($user['email']) ?>" class="w-full px-3 py-2 text-white bg-gray-700 rounded" disabled>
-            </div>
-            </form>
-
+                <!-- Form đổi tên người dùng -->
+                <form id="usernameForm">
+                    <div class="mb-4">
+                        <label class="block mb-1 font-semibold">Tên người dùng:</label>
+                        <div class="flex gap-2">
+                            <input type="text" name="new_username" class="w-full px-3 py-2 text-black rounded" value="<?= htmlspecialchars($user['username']) ?>" required>
+                            <button type="submit" class="bg-green-500 hover:bg-green-400 text-white px-4 rounded transition-all duration-300">Lưu</button>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-1 font-semibold">Email:</label>
+                        <input type="email" value="<?= htmlspecialchars($user['email']) ?>" class="w-full px-3 py-2 text-white bg-gray-700 rounded" disabled>
+                    </div>
+                </form>
                 <p class="mb-2"><strong>Số phim đã lưu:</strong> <?= $movieCount ?></p>
                 <button onclick="openModal()" class="inline-block mt-3 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded transition-all duration-300">Đổi mật khẩu</button>
             </div>
@@ -103,11 +104,11 @@ $movieCount = $countResult->fetch_assoc()['total'];
             <form id="changePasswordForm">
                 <div class="mb-3">
                     <label class="block font-medium">Mật khẩu hiện tại:</label>
-                        <input type="password" name="current_password" class="w-full px-3 py-2 border rounded" required>
+                    <input type="password" name="current_password" class="w-full px-3 py-2 border rounded" required>
                 </div>
                 <div class="mb-3">
                     <label class="block font-medium">Mật khẩu mới:</label>
-                        <input type="password" name="new_password" class="w-full px-3 py-2 border rounded" required>
+                    <input type="password" name="new_password" class="w-full px-3 py-2 border rounded" required>
                 </div>
                 <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white">Đổi mật khẩu</button>
             </form>

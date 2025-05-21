@@ -1,4 +1,4 @@
-<footer class="bg-gray-900 text-gray-300 py-10 mt-36">
+<footer class="bg-black-900 text-gray-300 py-10 mt-36">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <!-- Giới thiệu -->

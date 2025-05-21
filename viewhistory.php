@@ -111,6 +111,7 @@ function timeAgo($datetime) {
       <!-- Nút Xóa -->
         <form method="POST" action="delete_movie.php" onsubmit="return confirm('Xóa phim khỏi lịch sử xem?');">
           <input type="hidden" name="slug" value="<?= htmlspecialchars($movie['movie_slug']) ?>">
+          <input type="hidden" name="movie_type" value="<?= htmlspecialchars($movie['movie_type']) ?>">
           <input type="hidden" name="save_type" value="history">
           <button type="submit"
           class="text-white bg-gradient-to-r from-red-500 via-red-600 to-red-700 hover:from-red-600 hover:to-red-800 font-medium rounded-lg text-sm px-3 py-2 shadow-md focus:outline-none">

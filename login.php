@@ -9,18 +9,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($username) || empty($password)) {
         $message = 'Vui lòng nhập đầy đủ thông tin!';
     } else {
-        $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
+        $stmt = $conn->prepare("SELECT id, username, password, avatar FROM users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $hashed_password);
+            $stmt->bind_result($id, $username, $hashed_password, $avatar);
             $stmt->fetch();
             if (password_verify($password, $hashed_password)) {
                 $_SESSION['user_id'] = $id;
                 $_SESSION['username'] = $username;
-                $_SESSION['user_avatar'] = $user['avatar'] ?? 'img/user.png';
+                $_SESSION['user_avatar'] = $avatar ? 'uploads/avatars/' . $avatar : 'img/user.png'; // Sử dụng avatar từ DB hoặc mặc định
                 $message = 'Đăng nhập thành công!';
                 header("Location: index.php");
                 exit();
@@ -89,8 +89,8 @@ $conn->close();
     <?php endif; ?>
     <script>
         function closePopup() {
-    document.getElementById('popup').classList.remove('show');
-    }
+            document.getElementById('popup').classList.remove('show');
+        }
     </script>
 </body>
 </html>

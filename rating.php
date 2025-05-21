@@ -65,7 +65,7 @@ function percent($count, $total)
   <div class="mt-12">
     <form id="ratingForm">
       <div class="flex items-center mb-4">
-        <label class="mr-2 text-sm font-medium text-gray-500 dark:text-gray-400">Your Rating</label>
+        <label class="mr-2 text-sm font-medium text-gray-500 dark:text-gray-400">Đánh giá của bạn</label>
         <div class="flex space-x-1" id="star-rating">
           <?php for ($i = 1; $i <= 5; $i++): ?>
             <input type="radio" id="star<?= $i ?>" name="stars" value="<?= $i ?>" class="hidden" />
@@ -75,7 +75,7 @@ function percent($count, $total)
           <?php endfor; ?>
         </div>
       </div>
-      <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded">Submit Rating</button>
+      <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded">Đánh giá</button>
     </form>
   </div>
 
