@@ -61,23 +61,21 @@ function percent($count, $total)
 ?>
 
 <!-- Giao diện đánh giá -->
-<div>
-  <div class="mt-12">
-    <form id="ratingForm">
-      <div class="flex items-center mb-4">
-        <label class="mr-2 text-sm font-medium text-gray-500 dark:text-gray-400">Đánh giá của bạn</label>
-        <div class="flex space-x-1" id="star-rating">
-          <?php for ($i = 1; $i <= 5; $i++): ?>
-            <input type="radio" id="star<?= $i ?>" name="stars" value="<?= $i ?>" class="hidden" />
-            <label for="star<?= $i ?>"
-              class="star text-xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors duration-200"
-              data-star="<?= $i ?>">★</label>
-          <?php endfor; ?>
-        </div>
+<div class="lg:backdrop-blur-lg lg:bg-[#282b3a8a] rounded-xl p-6">
+  <form id="ratingForm" class="flex items-start gap-2">
+    <div class="flex items-center">
+      <h4 class="mr-2 text-lg font-medium text-white dark:text-gray-400">Phần đánh đánh giá của bạn</h4>
+      <div class="flex space-x-1" id="star-rating">
+        <?php for ($i = 1; $i <= 5; $i++): ?>
+          <input type="radio" id="star<?= $i ?>" name="stars" value="<?= $i ?>" class="hidden" />
+          <label for="star<?= $i ?>"
+            class="star text-xl cursor-pointer text-gray-300 hover:text-yellow-400 transition-colors duration-200"
+            data-star="<?= $i ?>">★</label>
+        <?php endfor; ?>
       </div>
-      <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded">Đánh giá</button>
-    </form>
-  </div>
+    </div>
+    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Đánh giá</button>
+  </form>
 
   <!-- Hiển thị điểm trung bình -->
   <div class="flex items-center mb-2 mt-4">
@@ -141,11 +139,22 @@ function percent($count, $total)
     })
       .then(res => res.text())
       .then(data => {
-        alert(data);
+        Swal.fire({
+          icon: 'success',
+          title: data,
+          timer: 1500,
+          showConfirmButton: false
+        });
         location.reload(); // Reload để cập nhật đánh giá mới
       })
       .catch(err => {
-        alert("Đã có lỗi xảy ra!");
+        Swal.fire({
+          icon: 'error',
+          title: 'Đã xảy ra lỗi!',
+          text: 'Vui lòng thử lại sau.',
+          timer: 1500,
+          showConfirmButton: false
+        });
         console.error(err);
       });
   });

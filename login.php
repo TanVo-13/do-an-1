@@ -3,32 +3,33 @@ session_start();
 include 'connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
     $password = trim($_POST['password']);
 
-    if (empty($username) || empty($password)) {
+    if (empty($email) || empty($password)) {
         $message = 'Vui lòng nhập đầy đủ thông tin!';
     } else {
-        $stmt = $conn->prepare("SELECT id, username, password, avatar FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        $stmt = $conn->prepare("SELECT id, email, username, password, avatar FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $username, $hashed_password, $avatar);
+            $stmt->bind_result($id, $email, $username, $hashed_password, $avatar);
             $stmt->fetch();
             if (password_verify($password, $hashed_password)) {
                 $_SESSION['user_id'] = $id;
                 $_SESSION['username'] = $username;
+                $_SESSION['user_email'] = $email;
                 $_SESSION['user_avatar'] = $avatar ? 'uploads/avatars/' . $avatar : 'img/user.png'; // Sử dụng avatar từ DB hoặc mặc định
                 $message = 'Đăng nhập thành công!';
                 header("Location: index.php");
                 exit();
             } else {
-                $message = 'Tên đăng nhập hoặc mật khẩu không đúng!';
+                $message = 'Email hoặc mật khẩu không đúng!';
             }
         } else {
-            $message = 'Tên đăng nhập hoặc mật khẩu không đúng!';
+            $message = 'Email hoặc mật khẩu không đúng!';
         }
         $stmt->close();
     }
@@ -59,8 +60,8 @@ $conn->close();
             </div>
             <form action="" method="POST">
                 <div class="data">
-                    <label>Tên đăng nhập</label>
-                    <input type="text" name="username" placeholder="Nhập tên đăng nhập">
+                    <label>Email</label>
+                    <input type="text" name="email" placeholder="Nhập email">
                 </div>
                 <div class="data">
                     <label>Mật khẩu</label>

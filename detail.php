@@ -44,9 +44,9 @@ $totalItems = $data["params"]["pagination"]["totalItems"];
           <?php foreach ($data['items'] as $movie): ?>
             <div class="relative group">
               <div class="flex flex-col gap-2 group"
-                href="/do-an-xem-phim/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
+                href="/do-an-1/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
                 <div class="h-0 relative pb-[150%] rounded-xl overflow-hidden css-0 group flex items-center justify-center">
-                  <a href="/do-an-xem-phim/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
+                  <a href="/do-an-1/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
                     <img
                       class="border border-gray-800 h-full rounded-xl w-full absolute group-hover:brightness-75 inset-0 transition-all group-hover:scale-105"
                       src="<?= "https://phimimg.com/" . $movie['poster_url'] ?>" alt="<?= $movie['name'] ?>">
@@ -63,8 +63,10 @@ $totalItems = $data["params"]["pagination"]["totalItems"];
                     <input type="hidden" name="type_movie" value="<?= $movie['type'] ?>">
                     <button type="submit"
                       class="text-white text-center absolute bottom-2 left-2 right-2 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-2 focus:outline-none">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M10.804 8 5 4.633v6.734zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696z" />
+                      <svg xmlns="http://www.w3.org/2000/svg" class="inline w-4 h-4 mr-1" fill="currentColor"
+                        viewBox="0 0 16 16">
+                        <path
+                          d="M10.804 8 5 4.633v6.734zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696z" />
                       </svg>
                       Xem ngay
                     </button>

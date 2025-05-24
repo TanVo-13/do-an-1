@@ -1,31 +1,44 @@
 <?php
+// Bắt đầu phiên làm việc với session để quản lý thông tin người dùng (ví dụ: đăng nhập)
 session_start();
+
+// Kết nối tới cơ sở dữ liệu (nếu có)
 include 'connect.php';
+
+// Nhúng các hàm tiện ích (trong đó có thể có hàm fetchData để gọi API)
 include "./utils/index.php";
 
+// Đường dẫn gốc tới API phim
 $baseUrl = "https://phimapi.com";
+
+// Số lượng phim tối đa sẽ lấy cho mỗi danh mục
 $limit = 12;
 
-// Lấy danh sách phim mới
+// Gọi API để lấy danh sách phim mới cập nhật (trang đầu tiên, giới hạn theo $limit)
 $newMovies = fetchData("$baseUrl/danh-sach/phim-moi-cap-nhat-v3?page=1&limit=$limit");
 
-// Danh mục phim
+// Khai báo các danh mục phim cần lấy dữ liệu
+// Key là slug trên API, value là tên class hoặc tên biến để dùng phía HTML/CSS
 $categories = [
-  "phim-le" => "series",
-  "phim-bo" => "single",
-  "tv-shows" => "tv-shows",
-  "hoat-hinh" => "cartoon",
-  "phim-vietsub" => "vietsub",
-  "phim-thuyet-minh" => "explanation",
-  "phim-long-tieng" => "voiceover"
+  "phim-le" => "series",           // Phim lẻ
+  "phim-bo" => "single",           // Phim bộ
+  "tv-shows" => "tv-shows",        // Chương trình truyền hình
+  "hoat-hinh" => "cartoon",        // Phim hoạt hình
+  "phim-vietsub" => "vietsub",     // Phim Vietsub
+  "phim-thuyet-minh" => "explanation", // Phim thuyết minh
+  "phim-long-tieng" => "voiceover",    // Phim lồng tiếng
+  "phim-chieu-rap" => "cinema",        // Phim chiếu rạp
 ];
 
+// Khởi tạo mảng chứa dữ liệu phim cho từng danh mục
 $moviesData = [];
 
+// Duyệt qua từng danh mục, gọi API tương ứng và lưu kết quả vào mảng $moviesData
 foreach ($categories as $type => $className) {
   $moviesData[$className] = fetchData("$baseUrl/v1/api/danh-sach/$type?limit=$limit");
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -45,7 +58,7 @@ foreach ($categories as $type => $className) {
   <?php include 'navbar.php'; ?>
 
   <!-- Slide Show -->
-  <section class="slide-show lg:pt-[32%] md:pt-[46%] pt-[50%] relative overflow-hidden">
+  <section class="slide-show pt-[46%] relative overflow-hidden">
     <?php if (!empty($newMovies['items'])): ?>
       <div class="swiper inset-0">
         <div class="swiper-wrapper">
@@ -67,7 +80,7 @@ foreach ($categories as $type => $className) {
                   </div>
 
                   <div class="flex gap-2 items-center mt-6">
-                  <form method="POST" action="watch_movie.php">
+                    <form method="POST" action="watch_movie.php">
                       <input type="hidden" name="name" value="<?= $movie['name'] ?>">
                       <input type="hidden" name="slug" value="<?= $movie['slug'] ?>">
                       <input type="hidden" name="poster" value="<?= $movie['poster_url'] ?>">
@@ -77,24 +90,16 @@ foreach ($categories as $type => $className) {
                       <input type="hidden" name="episode" value="<?= htmlspecialchars($_GET['episode'] ?? '') ?>">
                       <input type="hidden" name="episode_list" value='<?= json_encode($movie['movie_episodes'] ?? []) ?>'>
                       <input type="hidden" name="type_movie" value="<?= $movie['type'] ?>">
-                    <button type="submit"
-                            class="text-white text-center bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-6 py-3 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M10.804 8 5 4.633v6.734zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696z" />
-                            </svg>
-                            Xem ngay
-                    </button>
-                  </form>
-                    <a href="/do-an-xem-phim/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
+                      <button type="submit"
+                        class="text-white cursor-pointer text-center bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-6 py-3 focus:outline-none">
+                        <i class="fa-solid fa-circle-play"></i>
+                        Xem ngay
+                      </button>
+                    </form>
+                    <a href="/do-an-1/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
                       <button
-                        class="text-gray-900 flex items-center gap-1 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 ">
-                        <svg class="w-[24px] h-[24px]" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
-                          height="24" fill="currentColor" viewBox="0 0 24 24">
-                          <path fill-rule="evenodd"
-                            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm9.408-5.5a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2h-.01ZM10 10a1 1 0 1 0 0 2h1v3h-1a1 1 0 1 0 0 2h4a1 1 0 1 0 0-2h-1v-4a1 1 0 0 0-1-1h-2Z"
-                            clip-rule="evenodd" />
-                        </svg>
-
+                        class="text-gray-900 flex cursor-pointer items-center gap-1 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 ">
+                        <i class="fa-solid fa-circle-info"></i>
                         Thông tin
                       </button>
                     </a>
@@ -129,9 +134,9 @@ foreach ($categories as $type => $className) {
                 $describe = $ogUrlParts[0] ?? "danh-sach"; // Lấy phần "danh-sach"
                 $type = $ogUrlParts[1] ?? "phim-bo"; // Lấy phần loại phim
             
-                $href = "/do-an-xem-phim/detail.php?describe=" . urlencode($describe) . "&type=" . urlencode($type);
+                $href = "/do-an-1/detail.php?describe=" . urlencode($describe) . "&type=" . urlencode($type);
               } else {
-                $href = "/do-an-xem-phim/detail.php";
+                $href = "/do-an-1/detail.php";
               }
               ?>
 
@@ -148,10 +153,10 @@ foreach ($categories as $type => $className) {
                 <?php foreach ($data['data']['items'] as $movie): ?>
                   <div class="relative group">
                     <div class="flex flex-col gap-2 group"
-                      href="/do-an-xem-phim/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
+                      href="/do-an-1/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
                       <div
                         class="h-0 relative pb-[150%] rounded-xl overflow-hidden css-0 group flex items-center justify-center">
-                        <a href="/do-an-xem-phim/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
+                        <a href="/do-an-1/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
                           <img
                             class="border border-gray-800 h-full rounded-xl w-full absolute group-hover:brightness-75 inset-0 transition-all group-hover:scale-105"
                             src="<?= "https://phimimg.com/" . $movie['poster_url'] ?>" alt="<?= $movie['name'] ?>">
@@ -167,8 +172,10 @@ foreach ($categories as $type => $className) {
                           <input type="hidden" name="type_movie" value="<?= $movie['type'] ?>">
                           <button type="submit"
                             class="text-white text-center absolute bottom-2 left-2 right-2 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-3 py-2 focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 16 16">
-                            <path d="M10.804 8 5 4.633v6.734zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="inline w-4 h-4 mr-1" fill="currentColor"
+                              viewBox="0 0 16 16">
+                              <path
+                                d="M10.804 8 5 4.633v6.734zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696z" />
                             </svg>
                             Xem ngay
                           </button>
@@ -210,8 +217,8 @@ foreach ($categories as $type => $className) {
         loop: true,
         slidesPerView: 1,
         autoplay: {
-        delay: 4000, // thời gian giữa các slide (ms)
-        disableOnInteraction: false, // không dừng autoplay khi người dùng tương tác
+          delay: 4000, // thời gian giữa các slide (ms)
+          disableOnInteraction: false, // không dừng autoplay khi người dùng tương tác
         },
         pagination: {
           el: '.swiper-pagination',
