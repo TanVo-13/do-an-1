@@ -19,6 +19,7 @@ try {
         SELECT 
             c.id, 
             c.user_id, 
+            c.is_spam,
             u.username, 
             COALESCE(u.avatar, CASE u.role WHEN 'admin' THEN 'img/admin.png' ELSE 'img/user.png' END) AS avatar, 
             c.content, 
@@ -46,6 +47,7 @@ try {
             'created_at' => $row['created_at'],
             'likes' => (int)$row['likes'],
             'dislikes' => (int)$row['dislikes'],
+            'is_spam' => (bool)$row['is_spam'],
             'user_action' => $row['user_action']
         ];
     }

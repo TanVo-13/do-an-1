@@ -96,7 +96,7 @@ foreach ($categories as $type => $className) {
                         Xem ngay
                       </button>
                     </form>
-                    <a href="/do-an-xem-phim/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
+                    <a href="/do-an-1/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
                       <button
                         class="text-gray-900 flex cursor-pointer items-center gap-1 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 ">
                         <i class="fa-solid fa-circle-info"></i>
@@ -134,9 +134,9 @@ foreach ($categories as $type => $className) {
                 $describe = $ogUrlParts[0] ?? "danh-sach"; // Lấy phần "danh-sach"
                 $type = $ogUrlParts[1] ?? "phim-bo"; // Lấy phần loại phim
             
-                $href = "/do-an-xem-phim/detail.php?describe=" . urlencode($describe) . "&type=" . urlencode($type);
+                $href = "/do-an-1/detail.php?describe=" . urlencode($describe) . "&type=" . urlencode($type);
               } else {
-                $href = "/do-an-xem-phim/detail.php";
+                $href = "/do-an-1/detail.php";
               }
               ?>
 
@@ -153,10 +153,10 @@ foreach ($categories as $type => $className) {
                 <?php foreach ($data['data']['items'] as $movie): ?>
                   <div class="relative group">
                     <div class="flex flex-col gap-2 group"
-                      href="/do-an-xem-phim/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
+                      href="/do-an-1/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
                       <div
                         class="h-0 relative pb-[150%] rounded-xl overflow-hidden css-0 group flex items-center justify-center">
-                        <a href="/do-an-xem-phim/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
+                        <a href="/do-an-1/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
                           <img
                             class="border border-gray-800 h-full rounded-xl w-full absolute group-hover:brightness-75 inset-0 transition-all group-hover:scale-105"
                             src="<?= "https://phimimg.com/" . $movie['poster_url'] ?>" alt="<?= $movie['name'] ?>">

@@ -46,45 +46,55 @@ function renderComment(comment) {
   const hasLiked = comment.user_action === 'like';
   const hasDisliked = comment.user_action === 'dislike';
 
+  console.log('Rendering comment:', comment);
+
+  const isSpam = comment.is_spam == 1;
+
   const commentHTML = `
-        <div class="flex items-start mb-4 comment-item" data-comment-id="${comment.id}">
-            <img src="${comment.avatar}?v=${new Date().getTime()}" class="comment-avatar rounded-full mr-3 mt-1 w-10 h-10 object-cover" alt="Avatar">
-            <div class="bg-[#3a3f58] p-3 rounded-lg w-full">
-                <div class="flex items-center space-x-2 mb-1">
-                    <span class="text-sm text-gray-300 font-semibold">${comment.username}</span>
-                    <span class="text-xs text-gray-400">• ${timeText}</span>
+    <div class="flex items-start mb-4 comment-item" data-comment-id="${comment.id}">
+        <img src="${comment.avatar}?v=${new Date().getTime()}" class="comment-avatar rounded-full mr-3 mt-1 w-10 h-10 object-cover" alt="Avatar">
+        <div class="bg-[#3a3f58] p-3 rounded-lg w-full">
+            <div class="flex items-center space-x-2 mb-1">
+                <span class="text-sm text-gray-300 font-semibold">${comment.username}</span>
+                <span class="text-xs text-gray-400">• ${timeText}</span>
+            </div>
+            <p class="text-white mb-2 comment-content">
+              ${isSpam ? '<i class="text-red-400">Bình luận đã bị ẩn do bị đánh dấu là spam.</i>' : comment.content}
+            </p>
+            ${!isSpam ? `
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button class="flex items-center text-gray-400 hover:text-blue-500 like-button ${hasLiked ? 'text-blue-500' : ''}" title="Thích" data-type="like">
+                        <i class="fas fa-thumbs-up mr-1"></i>
+                        <span class="like-count">${comment.likes}</span>
+                    </button>
+                    <button class="flex items-center text-gray-400 hover:text-red-500 dislike-button ${hasDisliked ? 'text-red-500' : ''}" title="Không thích" data-type="dislike">
+                        <i class="fas fa-thumbs-down mr-1"></i>
+                        <span class="dislike-count">${comment.dislikes}</span>
+                    </button>
                 </div>
-                <p class="text-white mb-2 comment-content">${comment.content}</p>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
-                        <button class="flex items-center text-gray-400 hover:text-blue-500 like-button ${hasLiked ? 'text-blue-500' : ''}" title="Thích" data-type="like">
-                            <i class="fas fa-thumbs-up mr-1"></i>
-                            <span class="like-count">${comment.likes}</span>
-                        </button>
-                        <button class="flex items-center text-gray-400 hover:text-red-500 dislike-button ${hasDisliked ? 'text-red-500' : ''}" title="Không thích" data-type="dislike">
-                            <i class="fas fa-thumbs-down mr-1"></i>
-                            <span class="dislike-count">${comment.dislikes}</span>
-                        </button>
+                <div class="relative">
+                    ${isOwner ? `
+                    <button class="more-options focus:outline-none">
+                        <svg class="w-5 h-5 text-gray-400 hover:text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6 10a2 2 0 114 0 2 2 0 01-4 0zm5 0a2 2 0 114 0 2 2 0 01-4 0zm5 0a2 2 0 114 0 2 2 0 01-4 0z"/>
+                        </svg>
+                    </button>
+                    <div class="options-menu hidden absolute right-0 mt-2 w-32 bg-[#3a3f58] text-white rounded-lg shadow-lg z-10">
+                        <button class="block w-full text-left px-4 py-2 hover:bg-[#4b516b] edit-comment">Chỉnh sửa</button>
+                        <button class="block w-full text-left px-4 py-2 hover:bg-[#4b516b] delete-comment">Xóa</button>
                     </div>
-                    <div class="relative">
-                        ${isOwner ? `
-                        <button class="more-options focus:outline-none">
-                            <svg class="w-5 h-5 text-gray-400 hover:text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M6 10a2 2 0 114 0 2 2 0 01-4 0zm5 0a2 2 0 114 0 2 2 0 01-4 0zm5 0a2 2 0 114 0 2 2 0 01-4 0z"/>
-                            </svg>
-                        </button>
-                        <div class="options-menu hidden absolute right-0 mt-2 w-32 bg-[#3a3f58] text-white rounded-lg shadow-lg z-10">
-                            <button class="block w-full text-left px-4 py-2 hover:bg-[#4b516b] edit-comment">Chỉnh sửa</button>
-                            <button class="block w-full text-left px-4 py-2 hover:bg-[#4b516b] delete-comment">Xóa</button>
-                        </div>
-                        ` : ''}
-                    </div>
+                    ` : ''}
                 </div>
             </div>
+            ` : ''}
         </div>
-    `;
+    </div>
+  `;
+
   commentsContainer.insertAdjacentHTML('beforeend', commentHTML);
 }
+
 
 function addCommentButtonListeners() {
   document.querySelectorAll('.like-button, .dislike-button').forEach(button => {

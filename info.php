@@ -216,12 +216,12 @@ $stmt->close();
                   <div class="flex flex-col gap-2">
                     <div class="flex gap-2 items-center flex-wrap"><strong>Thể
                         loại:</strong><?php foreach ($category as $index => $item): ?><a
-                          href="/do-an-xem-phim/detail.php?describe=the-loai&type=<?= $item['slug'] ?>"
+                          href="/do-an-1/detail.php?describe=the-loai&type=<?= $item['slug'] ?>"
                           class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-sm dark:bg-blue-900 dark:text-blue-300"><?= $item['name'] ?></a><?php endforeach; ?>
                     </div>
                     <div class="flex gap-2 items-center flex-wrap"><strong>Quốc
                         gia:</strong><?php foreach ($country as $index => $item): ?><a
-                          href="/do-an-xem-phim/detail.php?describe=quoc-gia&type=<?= $item['slug'] ?>"
+                          href="/do-an-1/detail.php?describe=quoc-gia&type=<?= $item['slug'] ?>"
                           class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-sm dark:bg-purple-900 dark:text-purple-300"><?= $item['name'] ?></a><?php endforeach; ?>
                     </div>
                     <div class="flex gap-2 items-center flex-wrap"><strong>Đạo
@@ -362,10 +362,11 @@ $stmt->close();
               </div>
             </div>
             <div class="flex items-start mb-4">
-              <img src="<?= htmlspecialchars($_SESSION['user_avatar'] ?? ($_SESSION['role'] === 'admin' ? 'img/admin.png' : 'img/user.png')) ?>?v=<?= time() ?>" alt="Avatar"
-                class="comment-avatar rounded-full mr-3 mt-1">
+              <img
+                src="<?= htmlspecialchars($_SESSION['user_avatar'] ?? ($_SESSION['role'] === 'admin' ? 'img/admin.png' : 'img/user.png')) ?>?v=<?= time() ?>"
+                alt="Avatar" class="comment-avatar rounded-full mr-3 mt-1">
               <div class="w-full">
-                <textarea id="comment" class="w-full p-4 rounded-md border border-gray-300 placeholder-gray-500 resize-none
+                <textarea id="comment" class="w-full p-4 rounded-md border text-gray-50 border-gray-300 placeholder-gray-500 resize-none
            focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition" rows="3"
                   placeholder="Viết bình luận của bạn..."></textarea>
                 <div id="commentActions" class="flex justify-end gap-2 mt-2 hidden">

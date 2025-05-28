@@ -1,5 +1,5 @@
 {
-  "name": "tuyen/do-an-xem-phim",
+  "name": "tuyen/do-an-1",
   "autoload": {
     "psr-4": {
       "Tuyen\\DoAnXemPhim\\": "src/"
