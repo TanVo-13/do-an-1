@@ -333,7 +333,6 @@ commentActions.querySelector('button.bg-blue-600').addEventListener('click', asy
   }
 });
 
-// ... (Giữ nguyên các phần mã khác)
 
 sortToggle.addEventListener('click', (e) => {
   e.stopPropagation();

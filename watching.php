@@ -201,11 +201,11 @@ $episode_param = $episodeParam ? '&episode=' . urlencode($episodeParam) : '';
             </div>
           </div>
           <div class="flex items-start mb-4">
-            <img src="<?= htmlspecialchars($_SESSION['user_avatar'] ?? 'img/user.png') ?>?v=<?= time() ?>" alt="Avatar"
+            <img src="<?= htmlspecialchars($_SESSION['user_avatar'] ?? ($_SESSION['role'] === 'admin' ? 'img/admin.png' : 'img/user.png')) ?>?v=<?= time() ?>" alt="Avatar"
               class="comment-avatar rounded-full mr-3 mt-1">
             <div class="w-full">
               <textarea id="comment" class="w-full p-4 rounded-md border border-gray-300 placeholder-gray-500 resize-none
-           focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition" rows="3"
+                focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition" rows="3"
                 placeholder="Viết bình luận của bạn..."></textarea>
               <div id="commentActions" class="flex justify-end gap-2 mt-2 hidden">
                 <button id="cancelComment"
@@ -236,7 +236,7 @@ $episode_param = $episodeParam ? '&episode=' . urlencode($episodeParam) : '';
 
   <script>
     window.usernameJS = <?= json_encode($_SESSION['username'] ?? '') ?>;
-    window.avatarJS = <?= json_encode($_SESSION['user_avatar'] ?? 'img/user.png') ?>;
+    window.avatarJS = <?= json_encode($_SESSION['user_avatar'] ?? ($_SESSION['role'] === 'admin' ? 'img/admin.png' : 'img/user.png')) ?>;
     window.slug = <?= json_encode($slug) ?>;
     window.userIdJS = <?= json_encode($_SESSION['user_id'] ?? '') ?>;
   </script>

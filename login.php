@@ -9,19 +9,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($email) || empty($password)) {
         $message = 'Vui lòng nhập đầy đủ thông tin!';
     } else {
-        $stmt = $conn->prepare("SELECT id, email, username, password, avatar FROM users WHERE email = ?");
+        $stmt = $conn->prepare("SELECT id, email, username, password, avatar, role FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($id, $email, $username, $hashed_password, $avatar);
+            $stmt->bind_result($id, $email, $username, $hashed_password, $avatar, $role);
             $stmt->fetch();
             if (password_verify($password, $hashed_password)) {
                 $_SESSION['user_id'] = $id;
                 $_SESSION['username'] = $username;
                 $_SESSION['user_email'] = $email;
-                $_SESSION['user_avatar'] = $avatar ? 'uploads/avatars/' . $avatar : 'img/user.png'; // Sử dụng avatar từ DB hoặc mặc định
+                $_SESSION['role'] = $role;
+                // Gán avatar dựa trên role
+                $_SESSION['user_avatar'] = $avatar ? 'uploads/avatars/' . $avatar : ($role === 'admin' ? 'img/admin.png' : 'img/user.png');
                 $message = 'Đăng nhập thành công!';
                 header("Location: index.php");
                 exit();

@@ -10,13 +10,10 @@ include 'connect.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["send_code"])) {
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
+    
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $message = 'Địa chỉ email không hợp lệ. Vui lòng kiểm tra lại!';
-    }
-    elseif (($domain = explode("@", $email)) && !checkdnsrr(array_pop($domain), "MX")) {
-            $message = 'Địa chỉ email không tồn tại';
-    }
-    elseif (!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}$/', $password)) {
+    } elseif (!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}$/', $password)) {
         $message = 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ in hoa, 1 ký tự đặc biệt và 1 chữ số!';
     } else {
         $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
@@ -31,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["send_code"])) {
                 $_SESSION['email'] = $email;
                 $_SESSION['password'] = $password;
                 $_SESSION['verification_code'] = rand(100000, 999999);
+                $_SESSION['code_expiry'] = time() + 600; // Mã hết hạn sau 10 phút
 
                 $mail = new PHPMailer(true);
                 try {
@@ -42,10 +40,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["send_code"])) {
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                     $mail->Port = 587;
 
-                    $mail->setFrom('your_email@example.com', 'Admin');
+                    $mail->setFrom('phohoccode@gmail.com', 'VLUTE-FILM Admin');
                     $mail->addAddress($email);
-                    $mail->Subject = 'Mã xác thực của bạn';
-                    $mail->Body = "Mã xác thực của bạn là: " . $_SESSION['verification_code'];
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Mã xác thực đăng ký tài khoản VLUTE-FILM';
+                    $mail->Body = '<h3>Mã xác thực của bạn</h3><p>Mã xác thực để đăng ký tài khoản VLUTE-FILM là: <strong>' . $_SESSION['verification_code'] . '</strong></p><p>Vui lòng nhập mã này để hoàn tất đăng ký. Mã có hiệu lực trong 10 phút.</p>';
+                    $mail->AltBody = 'Mã xác thực để đăng ký tài khoản VLUTE-FILM là: ' . $_SESSION['verification_code'];
 
                     $mail->send();
                     $message = 'Mã xác thực đã được gửi đến email của bạn!';
@@ -66,36 +66,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["register"])) {
 
     if (empty($verification_code)) {
         $message = 'Vui lòng nhập mã xác thực!';
+    } elseif (time() > $_SESSION['code_expiry']) {
+        $message = 'Mã xác thực đã hết hạn. Vui lòng gửi lại mã!';
     } elseif ($verification_code != $_SESSION['verification_code']) {
         $message = 'Không đúng mã xác thực!';
+    } elseif (!isset($_SESSION['email']) || !isset($_SESSION['password'])) {
+        $message = 'Phiên đăng ký đã hết hạn. Vui lòng thử lại!';
     } else {
         $email = $_SESSION['email'];
         $password = $_SESSION['password'];
+        $role = 'member';
 
-        if (!preg_match('/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{6,}$/', $password)) {
-            $message = 'Mật khẩu phải có ít nhất 6 ký tự, bao gồm ít nhất 1 chữ in hoa, 1 ký tự đặc biệt và 1 chữ số!';
+        $password = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $username, $email, $password, $role);
+
+        if ($stmt->execute()) {
+            $message = 'Đăng ký thành công!';
+            $redirect = 'login.php';
+            unset($_SESSION['verification_code'], $_SESSION['email'], $_SESSION['password'], $_SESSION['code_expiry']);
         } else {
-            $password = password_hash($password, PASSWORD_DEFAULT);
-
-            $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $username, $email, $password);
-
-            if ($stmt->execute()) {
-                $message = 'Đăng ký thành công!';
-                $redirect = 'login.php';
-                unset($_SESSION['verification_code'], $_SESSION['email'], $_SESSION['password']);
-            } else {
-                $message = 'Lỗi đăng ký. Vui lòng thử lại!';
-            }
-            $stmt->close();
+            $message = 'Lỗi đăng ký. Vui lòng thử lại!';
         }
+        $stmt->close();
     }
 }
 $conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -128,7 +128,7 @@ $conn->close();
                 <div class="password-container">
                     <input type="password" name="password" id="password" required placeholder="Nhập mật khẩu"
                     value="<?= isset($_POST['password']) ? htmlspecialchars($_POST['password']) : '' ?>">
-                        <i class="fa-solid fa-eye toggle-password" id="eye-icon" onclick="togglePassword()"></i>
+                    <i class="fa-solid fa-eye toggle-password" id="eye-icon" onclick="togglePassword()"></i>
                 </div>
             </div>
             <div class="data">
@@ -162,8 +162,8 @@ $conn->close();
 <?php endif; ?>
 <script>
     function closePopup() {
-    document.getElementById('popup').classList.remove('show');
-}
+        document.getElementById('popup').classList.remove('show');
+    }
 </script>
 </body>
 </html>

@@ -87,7 +87,7 @@ function timeAgo($datetime)
               <div class="flex flex-col gap-2 group">
                 <div class="h-0 relative pb-[150%] rounded-xl overflow-hidden flex items-center justify-center">
                   <a
-                    href="/do-an-1/info.php?name=<?= urlencode($movie['movie_name']) ?>&slug=<?= urlencode($movie['movie_slug']) ?>">
+                    href="/do-an-xem-phim/info.php?name=<?= urlencode($movie['movie_name']) ?>&slug=<?= urlencode($movie['movie_slug']) ?>">
                     <img
                       class="border border-gray-800 h-full rounded-xl w-full absolute group-hover:brightness-75 inset-0 transition-all group-hover:scale-105"
                       src="<?= htmlspecialchars($movie['movie_poster']) ?>"

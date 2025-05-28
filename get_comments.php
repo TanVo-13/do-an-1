@@ -12,7 +12,6 @@ if (!$slug) {
 }
 
 $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 0;
-
 $order = $sort === 'asc' ? 'ASC' : 'DESC';
 
 try {
@@ -21,7 +20,7 @@ try {
             c.id, 
             c.user_id, 
             u.username, 
-            COALESCE(u.avatar, 'img/user.png') AS avatar, 
+            COALESCE(u.avatar, CASE u.role WHEN 'admin' THEN 'img/admin.png' ELSE 'img/user.png' END) AS avatar, 
             c.content, 
             c.created_at,
             (SELECT COUNT(*) FROM comment_likes cl WHERE cl.comment_id = c.id AND cl.type = 'like') AS likes,
@@ -42,7 +41,7 @@ try {
             'id' => $row['id'],
             'user_id' => $row['user_id'],
             'username' => $row['username'],
-            'avatar' => $row['avatar'] === 'img/user.png' ? 'img/user.png' : 'uploads/avatars/' . $row['avatar'],
+            'avatar' => $row['avatar'] === 'img/admin.png' || $row['avatar'] === 'img/user.png' ? $row['avatar'] : 'uploads/avatars/' . $row['avatar'],
             'content' => $row['content'],
             'created_at' => $row['created_at'],
             'likes' => (int)$row['likes'],
