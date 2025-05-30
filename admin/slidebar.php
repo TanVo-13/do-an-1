@@ -17,7 +17,7 @@
       </li>
       <li>
         <a href="comments.php" class="flex items-center p-2 rounded-lg hover:bg-gray-700">
-          <i class="fa fa-comment mr-2"></i> Quản lý bình luận
+          <i class="fa fa-comment mr-2"></i> Quản lý bình luận và đánh giá
         </a>
       </li>
       <li>

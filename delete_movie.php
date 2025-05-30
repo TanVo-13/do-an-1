@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['slug']) && isset($_PO
     $stmt = $conn->prepare("DELETE FROM user_movies WHERE user_id = ? AND movie_slug = ? AND save_type = ? AND movie_type = ?");
     $stmt->bind_param("isss", $userId, $slug, $save_type, $movie_type);
   } else {
-    $stmt = $conn->prepare("DELETE FROM user_movies WHERE user_id = ? AND id = ? AND save_type = ? AND movie_type = ?");
+    $stmt = $conn->prepare("UPDATE user_movies SET status = 'deleted' WHERE user_id = ? AND id = ? AND save_type = ? AND movie_type = ?");
     $stmt->bind_param("iiss", $userId, $id, $save_type, $movie_type);
   }
 

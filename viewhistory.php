@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_history'])) {
-  $deleteStmt = $conn->prepare("DELETE FROM user_movies WHERE user_id = ? AND save_type = 'history'");
+  $deleteStmt = $conn->prepare("UPDATE user_movies SET status = 'deleted' WHERE user_id = ? AND save_type = 'history'");
   $deleteStmt->bind_param("i", $userId);
   $deleteStmt->execute();
   header("Location: viewhistory.php");
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_history'])) {
 }
 
 // Truy vấn danh sách phim đã lưu
-$sql = "SELECT * FROM user_movies WHERE user_id = ? AND save_type = 'history' ORDER BY updated_at DESC";
+$sql = "SELECT * FROM user_movies WHERE user_id = ? AND save_type = 'history' AND status IS NULL ORDER BY updated_at DESC";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userId);
 $stmt->execute();
@@ -87,7 +87,7 @@ function timeAgo($datetime)
               <div class="flex flex-col gap-2 group">
                 <div class="h-0 relative pb-[150%] rounded-xl overflow-hidden flex items-center justify-center">
                   <a
-                    href="/do-an-1/info.php?name=<?= urlencode($movie['movie_name']) ?>&slug=<?= urlencode($movie['movie_slug']) ?>">
+                    href="/do-an-xem-phim/info.php?name=<?= urlencode($movie['movie_name']) ?>&slug=<?= urlencode($movie['movie_slug']) ?>">
                     <img
                       class="border border-gray-800 h-full rounded-xl w-full absolute group-hover:brightness-75 inset-0 transition-all group-hover:scale-105"
                       src="<?= htmlspecialchars($movie['movie_poster']) ?>"

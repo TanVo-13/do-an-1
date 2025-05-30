@@ -26,14 +26,16 @@ if ($selectedSlug) {
   $countStmt->execute([$selectedSlug]);
   $totalComments = $countStmt->fetchColumn();
 
-  // LẤY COMMENTS KÈM USERNAME
+  // LẤY COMMENTS KÈM USERNAME, EMAIL VÀ ĐÁNH GIÁ
   $stmt = $pdo->prepare("
         SELECT 
           c.*,
-          u.username
+          u.username,
+          u.email,
+          r.stars
         FROM comments AS c
-        LEFT JOIN users AS u 
-          ON c.user_id = u.id
+        LEFT JOIN users AS u ON c.user_id = u.id
+        LEFT JOIN ratings AS r ON c.user_id = r.user_id AND c.slug = r.slug
         WHERE c.slug = ?
         ORDER BY c.created_at DESC
         LIMIT ? OFFSET ?
@@ -56,17 +58,36 @@ $totalPages = ceil($totalComments / $perPage);
 
 <head>
   <meta charset="UTF-8">
-  <title>Quản lý bình luận</title>
+  <title>Quản lý bình luận, đánh giá - VLUTE-FILM</title>
+  <link href="../img/logo.png" rel="icon" type="image/x-icon" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-  
+  <style>
+    .admin-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
 
 <body class="bg-gray-100 text-gray-800">
   <?php include 'slidebar.php'; ?>
 
-  <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">Quản lý bình luận</h1>
+  <div class="main-content flex-1 p-6 md:ml-64 min-h-screen">
+    <div class="header-container">
+      <h1 class="text-2xl font-bold mb-6">Quản lý bình luận và đánh giá</h1>
+      <div class="admin-info">
+        <span class="text-gray-600">Xin chào, <?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></span>
+        <img src="<?php echo htmlspecialchars('../img/admin.png'); ?>" alt="Avatar" class="w-10 h-10 rounded-full">
+      </div>
+    </div>
 
     <!-- Chọn slug -->
     <form method="get" class="mb-6">
@@ -87,8 +108,10 @@ $totalPages = ceil($totalComments / $perPage);
           <tr>
             <th class="px-4 py-3 text-left">ID</th>
             <th class="px-4 py-3 text-left">Username</th>
+            <th class="px-4 py-3 text-left">Email</th>
             <th class="px-4 py-3 text-left">Nội dung</th>
             <th class="px-4 py-3 text-left">Ngày tạo</th>
+            <th class="px-4 py-3 text-center">Đánh giá</th>
             <th class="px-4 py-3 text-center">Spam?</th>
           </tr>
         </thead>
@@ -98,8 +121,22 @@ $totalPages = ceil($totalComments / $perPage);
               <tr class="<?= $comment['is_spam'] ? 'bg-red-50' : '' ?>" id="row-<?= $comment['id'] ?>">
                 <td class="px-4 py-2"><?= $comment['id'] ?></td>
                 <td class="px-4 py-2"><?= htmlspecialchars($comment['username'] ?? '—') ?></td>
+                <td class="px-4 py-2"><?= htmlspecialchars($comment['email'] ?? '—') ?></td>
                 <td class="px-4 py-2"><?= htmlspecialchars($comment['content']) ?></td>
                 <td class="px-4 py-2"><?= $comment['created_at'] ?></td>
+                <td class="px-4 py-2 text-center">
+                  <?php if ($comment['stars']): ?>
+                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                      <?php if ($i <= $comment['stars']): ?>
+                        <i class="fas fa-star text-yellow-400"></i>
+                      <?php else: ?>
+                        <i class="far fa-star text-gray-300"></i>
+                      <?php endif; ?>
+                    <?php endfor; ?>
+                  <?php else: ?>
+                    —
+                  <?php endif; ?>
+                </td>
                 <td class="px-4 py-2 text-center">
                   <input type="checkbox" class="spam-toggle w-4 h-4" data-id="<?= $comment['id'] ?>" <?= $comment['is_spam'] ? 'checked' : '' ?>>
                 </td>
@@ -107,7 +144,7 @@ $totalPages = ceil($totalComments / $perPage);
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="5" class="text-center py-6 text-gray-500">
+              <td colspan="7" class="text-center py-6 text-gray-500">
                 Không có bình luận nào.
               </td>
             </tr>

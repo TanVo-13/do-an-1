@@ -49,7 +49,7 @@ $titlePage = $data['titlePage'];
           <div class="relative group">
             <div class="flex flex-col gap-2 group">
               <div class="h-0 relative pb-[150%] rounded-xl overflow-hidden css-0 group flex items-center justify-center">
-                <a href="/do-an-1/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
+                <a href="/do-an-xem-phim/info.php?name=<?= $movie['name'] ?>&slug=<?= $movie['slug'] ?>">
                   <img
                     class="border border-gray-800 h-full rounded-xl w-full absolute group-hover:brightness-75 inset-0 transition-all group-hover:scale-105"
                     src="<?= "https://phimimg.com/" . $movie['poster_url'] ?>" alt="<?= $movie['name'] ?>">

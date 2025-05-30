@@ -201,8 +201,16 @@ $episode_param = $episodeParam ? '&episode=' . urlencode($episodeParam) : '';
             </div>
           </div>
           <div class="flex items-start mb-4">
-            <img src="<?= htmlspecialchars($_SESSION['user_avatar'] ?? ($_SESSION['role'] === 'admin' ? 'img/admin.png' : 'img/user.png')) ?>?v=<?= time() ?>" alt="Avatar"
-              class="comment-avatar rounded-full mr-3 mt-1">
+            <?php
+              $avatar = 'img/user.png'; // Hình ảnh mặc định
+              if (isset($_SESSION['user_id'])) {
+                  $avatar = $_SESSION['user_avatar'] ?? ($_SESSION['role'] === 'admin' ? 'img/admin.png' : 'img/user.png');
+              }
+              if (!file_exists($avatar)) {
+                  $avatar = 'img/user.png'; // Hình ảnh mặc định nếu không tìm thấy
+              }
+            ?>
+              <img src="<?= htmlspecialchars($avatar) ?>?v=<?= time() ?>" alt="Avatar" class="comment-avatar rounded-full mr-3 mt-1">
             <div class="w-full">
               <textarea id="comment" class="w-full p-4 rounded-md border border-gray-300 placeholder-gray-500 resize-none
                 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition" rows="3"
